@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -23,6 +24,7 @@ import com.cst438.controllers.GradeBookController;
 import com.cst438.domain.Assignment;
 import com.cst438.domain.AssignmentGrade;
 import com.cst438.domain.AssignmentGradeRepository;
+import com.cst438.domain.AssignmentListDTO;
 import com.cst438.domain.AssignmentRepository;
 import com.cst438.domain.Course;
 import com.cst438.domain.CourseRepository;
@@ -73,6 +75,125 @@ public class JunitTestGradebook {
 
 	@Autowired
 	private MockMvc mvc;
+	
+	@Test
+	public void addAssignment() throws Exception {
+		MockHttpServletResponse response;
+		
+		// mock database data
+
+		Course course = new Course();
+		course.setCourse_id(TEST_COURSE_ID);
+		course.setSemester(TEST_SEMESTER);
+		course.setYear(TEST_YEAR);
+		course.setInstructor(TEST_INSTRUCTOR_EMAIL);
+		course.setEnrollments(new java.util.ArrayList<Enrollment>());
+		course.setAssignments(new java.util.ArrayList<Assignment>());
+		
+		given(courseRepository.findById(TEST_COURSE_ID)).willReturn(Optional.of(course));
+		
+		// end of mock data
+		
+		AssignmentListDTO.AssignmentDTO a = new AssignmentListDTO.AssignmentDTO();
+		a.assignmentName = "new assignment";
+		a.dueDate = "2022-10-13";
+		a.courseId = TEST_COURSE_ID;
+				
+		response = mvc
+				.perform(MockMvcRequestBuilders.post("/gradebook/add").accept(MediaType.APPLICATION_JSON)
+						.content(asJsonString(a)).contentType(MediaType.APPLICATION_JSON))
+				.andReturn().getResponse();
+		
+		// verify that return status = OK (value 200)
+		assertEquals(200, response.getStatus());
+		
+		verify(assignmentRepository, times(1)).save(any());
+		
+	}
+	
+	@Test
+	public void changeAssignmentName() throws Exception {
+		MockHttpServletResponse response;
+
+		// mock database data
+		
+		Course course = new Course();
+		course.setCourse_id(TEST_COURSE_ID);
+		course.setSemester(TEST_SEMESTER);
+		course.setYear(TEST_YEAR);
+		course.setInstructor(TEST_INSTRUCTOR_EMAIL);
+		course.setEnrollments(new java.util.ArrayList<Enrollment>());
+		course.setAssignments(new java.util.ArrayList<Assignment>());
+		
+		Assignment assignment = new Assignment();
+		assignment.setCourse(course);
+		course.getAssignments().add(assignment);
+		// set dueDate to 1 week before now.
+		assignment.setDueDate(new java.sql.Date(System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000));
+		assignment.setId(1);
+		assignment.setName("Assignment 1");
+		assignment.setNeedsGrading(1);
+		
+		given(courseRepository.findById(TEST_COURSE_ID)).willReturn(Optional.of(course));
+		given(assignmentRepository.findById(1)).willReturn(Optional.of(assignment));
+		
+		AssignmentListDTO.AssignmentDTO a = new AssignmentListDTO.AssignmentDTO();
+		a.assignmentName = "new name";
+		a.courseId = TEST_COURSE_ID;
+		a.assignmentId = assignment.getId();
+			
+		response = mvc
+				.perform(MockMvcRequestBuilders.post("/gradebook/edit").accept(MediaType.APPLICATION_JSON)
+						.content(asJsonString(a)).contentType(MediaType.APPLICATION_JSON))
+				.andReturn().getResponse();
+		
+		// verify that return status = OK (value 200)
+		assertEquals(200, response.getStatus());
+		
+		verify(assignmentRepository, times(1)).save(any());
+	}
+	
+	@Test
+	public void deleteAssignment() throws Exception {
+		MockHttpServletResponse response;
+
+		// mock database data
+		
+		Course course = new Course();
+		course.setCourse_id(TEST_COURSE_ID);
+		course.setSemester(TEST_SEMESTER);
+		course.setYear(TEST_YEAR);
+		course.setInstructor(TEST_INSTRUCTOR_EMAIL);
+		course.setEnrollments(new java.util.ArrayList<Enrollment>());
+		course.setAssignments(new java.util.ArrayList<Assignment>());
+		
+		Assignment assignment = new Assignment();
+		assignment.setCourse(course);
+		course.getAssignments().add(assignment);
+		// set dueDate to 1 week before now.
+		assignment.setDueDate(new java.sql.Date(System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000));
+		assignment.setId(1);
+		assignment.setName("Assignment 1");
+		assignment.setNeedsGrading(1);
+		
+		given(courseRepository.findById(TEST_COURSE_ID)).willReturn(Optional.of(course));
+		given(assignmentRepository.findById(1)).willReturn(Optional.of(assignment));
+		
+		AssignmentListDTO.AssignmentDTO a = new AssignmentListDTO.AssignmentDTO();
+		a.assignmentName = a.assignmentName;
+		a.courseId = TEST_COURSE_ID;
+		a.assignmentId = assignment.getId();
+		
+		response = mvc
+				.perform(MockMvcRequestBuilders.put("/gradebook/delete").accept(MediaType.APPLICATION_JSON)
+						.content(asJsonString(a)).contentType(MediaType.APPLICATION_JSON))
+				.andReturn().getResponse();
+		
+		// verify that return status = OK (value 200)
+		assertEquals(200, response.getStatus());
+		
+		verify(assignmentRepository, times(1)).deleteById(any());
+	}
 
 	@Test
 	public void gradeAssignment() throws Exception {
@@ -122,7 +243,7 @@ public class JunitTestGradebook {
 		response = mvc.perform(MockMvcRequestBuilders.get("/gradebook/1").accept(MediaType.APPLICATION_JSON))
 				.andReturn().getResponse();
 
-		// verify return data with entry for one student without no score
+		// verify return data with entry for one student with no score
 		assertEquals(200, response.getStatus());
 
 		// verify that a save was called on repository
@@ -207,7 +328,7 @@ public class JunitTestGradebook {
 		response = mvc.perform(MockMvcRequestBuilders.get("/gradebook/1").accept(MediaType.APPLICATION_JSON))
 				.andReturn().getResponse();
 
-		// verify return data with entry for one student without no score
+		// verify return data with entry for one student with no score
 		assertEquals(200, response.getStatus());
 
 		// verify that a save was NOT called on repository because student already has a
