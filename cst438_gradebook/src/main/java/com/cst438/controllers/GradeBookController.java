@@ -50,7 +50,7 @@ public class GradeBookController {
 	public AssignmentListDTO getAssignmentsNeedGrading( ) {
 		
 		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
-		
+
 		List<Assignment> assignments = assignmentRepository.findNeedGradingByEmail(email);
 		AssignmentListDTO result = new AssignmentListDTO();
 		for (Assignment a: assignments) {
@@ -158,10 +158,10 @@ public class GradeBookController {
 		
 	}
 
-	@PostMapping("/gradebook/add")
+	@PostMapping("/addAssignment")
 	public void addAssignment(@RequestBody AssignmentListDTO.AssignmentDTO assignment) throws ParseException {
 		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
-		
+	
 		Course c = courseRepository.findById(assignment.courseId).orElse(null);
 		if (c == null) {
 			throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Invalid course primary key. "+assignment.courseId);
@@ -172,24 +172,25 @@ public class GradeBookController {
 		if (assignment.assignmentName == null || assignment.assignmentName.isBlank()) {
 			throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Invalid assignment name.");
 		}
+	
 		if (assignment.dueDate == null || assignment.dueDate.isBlank()) {
 			throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Invalid date format.");
 		}
 		
-
 		SimpleDateFormat obj = new SimpleDateFormat("dd-MM-yyyy"); 
 		long date = obj.parse(assignment.dueDate).getTime();
 		
 		Assignment a = new Assignment();
 		a.setCourse(c);
-		a.setNeedsGrading(0);
+		a.setNeedsGrading(1);
 		a.setName(assignment.assignmentName);
 		a.setDueDate(new java.sql.Date(date));
-
+			
+		System.out.println("lols "+a);
 		assignmentRepository.save(a);
 	}
 	
-	@PostMapping("/gradebook/edit")
+	@PostMapping("/editAssignment")
 	public void editAssignmentName(@RequestBody	AssignmentListDTO.AssignmentDTO assignment) {
 		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
 		
@@ -212,7 +213,7 @@ public class GradeBookController {
 		assignmentRepository.save(old);
 	}
 	
-	@PutMapping("/gradebook/delete")
+	@PutMapping("/deleteAssignment")
 	public void deleteAssignment(@RequestBody AssignmentListDTO.AssignmentDTO assignment) {
 		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
 		

@@ -100,7 +100,7 @@ public class JunitTestGradebook {
 		a.courseId = TEST_COURSE_ID;
 				
 		response = mvc
-				.perform(MockMvcRequestBuilders.post("/gradebook/add").accept(MediaType.APPLICATION_JSON)
+				.perform(MockMvcRequestBuilders.post("/addAssignment").accept(MediaType.APPLICATION_JSON)
 						.content(asJsonString(a)).contentType(MediaType.APPLICATION_JSON))
 				.andReturn().getResponse();
 		
@@ -143,7 +143,7 @@ public class JunitTestGradebook {
 		a.assignmentId = assignment.getId();
 			
 		response = mvc
-				.perform(MockMvcRequestBuilders.post("/gradebook/edit").accept(MediaType.APPLICATION_JSON)
+				.perform(MockMvcRequestBuilders.post("/editAssignment").accept(MediaType.APPLICATION_JSON)
 						.content(asJsonString(a)).contentType(MediaType.APPLICATION_JSON))
 				.andReturn().getResponse();
 		
@@ -185,7 +185,7 @@ public class JunitTestGradebook {
 		a.assignmentId = assignment.getId();
 		
 		response = mvc
-				.perform(MockMvcRequestBuilders.put("/gradebook/delete").accept(MediaType.APPLICATION_JSON)
+				.perform(MockMvcRequestBuilders.put("/deleteAssignment").accept(MediaType.APPLICATION_JSON)
 						.content(asJsonString(a)).contentType(MediaType.APPLICATION_JSON))
 				.andReturn().getResponse();
 		
