@@ -37,7 +37,6 @@ public class EnrollmentController {
 			throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Invalid course id. "+enrollmentDTO.course_id);
 		}
 		
-		e.setId(enrollmentDTO.id);
 		e.setStudentEmail(enrollmentDTO.studentEmail);
 		e.setStudentName(enrollmentDTO.studentName);
 		e.setCourse(c);
