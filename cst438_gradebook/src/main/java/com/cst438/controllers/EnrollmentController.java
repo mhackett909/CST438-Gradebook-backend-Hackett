@@ -29,12 +29,21 @@ public class EnrollmentController {
 	 */
 	@PostMapping("/enrollment")
 	@Transactional
-	public EnrollmentDTO addEnrollment(@RequestBody EnrollmentDTO enrollmentDTO) {
+	public EnrollmentDTO addEnrollment(@RequestBody EnrollmentDTO enrollmentDTO) {	
+		Enrollment e = new Enrollment();
+		Course c = courseRepository.findById(enrollmentDTO.course_id).orElse(null);
 		
-		//TODO  complete this method in homework 4
+		if (c == null) {
+			throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Invalid course id. "+enrollmentDTO.course_id);
+		}
 		
-		return null;
+		e.setStudentEmail(enrollmentDTO.studentEmail);
+		e.setStudentName(enrollmentDTO.studentName);
+		e.setCourse(c);
+				
+		enrollmentRepository.save(e);
 		
+		return enrollmentDTO;
 	}
 
 }
