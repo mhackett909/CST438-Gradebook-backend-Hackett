@@ -19,8 +19,6 @@ public class RegistrationServiceREST extends RegistrationService {
 	
 	@Override
 	public void sendFinalGrades(int course_id , CourseDTOG courseDTO) { 
-		
-		//TODO  complete this method in homework 4
-		
+		restTemplate.put("http://localhost:8080/course/"+course_id, courseDTO);
 	}
 }

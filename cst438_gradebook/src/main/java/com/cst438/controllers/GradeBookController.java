@@ -64,7 +64,6 @@ public class GradeBookController {
 		
 		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
 		Assignment assignment = checkAssignment(assignmentId, email);
-		
 		// get the enrollment for the course
 		//  for each student, get the current grade for assignment, 
 		//   if the student does not have a current grade, create an empty grade
@@ -176,17 +175,17 @@ public class GradeBookController {
 		if (assignment.dueDate == null || assignment.dueDate.isBlank()) {
 			throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Invalid date format.");
 		}
-		
+		System.out.println(assignment.dueDate);
 		SimpleDateFormat obj = new SimpleDateFormat("dd-MM-yyyy"); 
 		long date = obj.parse(assignment.dueDate).getTime();
+		System.out.println(date);
 		
 		Assignment a = new Assignment();
 		a.setCourse(c);
 		a.setNeedsGrading(1);
 		a.setName(assignment.assignmentName);
 		a.setDueDate(new java.sql.Date(date));
-			
-		System.out.println("lols "+a);
+	
 		assignmentRepository.save(a);
 	}
 	
