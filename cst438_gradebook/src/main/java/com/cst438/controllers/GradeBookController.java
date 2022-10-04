@@ -24,6 +24,7 @@ import com.cst438.domain.AssignmentGradeRepository;
 import com.cst438.domain.AssignmentRepository;
 import com.cst438.domain.Course;
 import com.cst438.domain.CourseDTOG;
+import com.cst438.domain.CourseListDTO;
 import com.cst438.domain.CourseRepository;
 import com.cst438.domain.Enrollment;
 import com.cst438.domain.GradebookDTO;
@@ -89,6 +90,24 @@ public class GradeBookController {
 		}
 		return gradebook;
 	}
+	
+	// get list of courses
+	@GetMapping("/course")
+	public CourseListDTO getCourses( ) {
+		
+		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
+
+		List<Course> courses = courseRepository.findCoursesByInstructor(email);
+
+		CourseListDTO result = new CourseListDTO();
+		
+		for (Course c : courses) {
+			result.courses.add(new CourseListDTO.CourseDTO(c.getCourse_id(), c.getTitle(), c.getInstructor(), c.getYear(), c.getSemester()));
+		}
+
+		return result;
+	}
+	
 	
 	@PostMapping("/course/{course_id}/finalgrades")
 	@Transactional
