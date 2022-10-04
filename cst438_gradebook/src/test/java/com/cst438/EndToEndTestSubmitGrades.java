@@ -11,7 +11,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -27,7 +27,7 @@ import com.cst438.domain.EnrollmentRepository;
 
 /*
  * This example shows how to use selenium testing using the web driver 
- * with Chrome browser.
+ * with Edge browser.
  * 
  *  - Buttons, input, and anchor elements are located using XPATH expression.
  *  - onClick( ) method is used with buttons and anchor tags.
@@ -42,7 +42,7 @@ import com.cst438.domain.EnrollmentRepository;
 @SpringBootTest
 public class EndToEndTestSubmitGrades {
 
-	public static final String CHROME_DRIVER_FILE_LOCATION = "C:/chromedriver_win32/chromedriver.exe";
+	public static final String EDGE_DRIVER_FILE_LOCATION = "C:\\Users\\Michael\\Dropbox\\Backup\\Michael\\Shared\\Documents\\CSUMB\\CST438 Software Engineering\\Week 5\\msedgedriver.exe";
 
 	public static final String URL = "http://localhost:3000";
 	public static final String TEST_USER_EMAIL = "test@csumb.edu";
@@ -107,8 +107,8 @@ public class EndToEndTestSubmitGrades {
 		 * initialize the WebDriver and get the home page. 
 		 */
 
-		System.setProperty("webdriver.chrome.driver", CHROME_DRIVER_FILE_LOCATION);
-		WebDriver driver = new ChromeDriver();
+		System.setProperty("webdriver.edge.driver", EDGE_DRIVER_FILE_LOCATION);
+		WebDriver driver = new EdgeDriver();
 		// Puts an Implicit wait for 10 seconds before throwing exception
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
