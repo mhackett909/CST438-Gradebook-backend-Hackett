@@ -49,8 +49,8 @@ public class GradeBookController {
 	// get assignments for an instructor that need grading
 	@GetMapping("/gradebook")
 	public AssignmentListDTO getAssignmentsNeedGrading( ) {
-		
 		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
+		//String email = principal.getAttribute("email");  // user name (should be instructor's email) 
 
 		List<Assignment> assignments = assignmentRepository.findNeedGradingByEmail(email);
 		AssignmentListDTO result = new AssignmentListDTO();
@@ -61,9 +61,10 @@ public class GradeBookController {
 	}
 	
 	@GetMapping("/gradebook/{id}")
-	public GradebookDTO getGradebook(@PathVariable("id") Integer assignmentId  ) {
+	public GradebookDTO getGradebook(@PathVariable("id") Integer assignmentId ) {
 		
 		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
+		//String email = principal.getAttribute("email");  // user name (should be instructor's email)
 		Assignment assignment = checkAssignment(assignmentId, email);
 		// get the enrollment for the course
 		//  for each student, get the current grade for assignment, 
@@ -93,9 +94,10 @@ public class GradeBookController {
 	
 	// get list of courses
 	@GetMapping("/course")
-	public CourseListDTO getCourses( ) {
+	public CourseListDTO getCourses() {
 		
 		String email = "dwisneski@csumb.edu";  // user name (should be instructor's email) 
+		//String email = principal.getAttribute("email");  // user name (should be instructor's email)
 
 		List<Course> courses = courseRepository.findCoursesByInstructor(email);
 
@@ -194,10 +196,8 @@ public class GradeBookController {
 		if (assignment.dueDate == null || assignment.dueDate.isBlank()) {
 			throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Invalid date format.");
 		}
-		System.out.println(assignment.dueDate);
-		SimpleDateFormat obj = new SimpleDateFormat("dd-MM-yyyy"); 
+		SimpleDateFormat obj = new SimpleDateFormat("yyyy-MM-dd"); 
 		long date = obj.parse(assignment.dueDate).getTime();
-		System.out.println(date);
 		
 		Assignment a = new Assignment();
 		a.setCourse(c);
